@@ -143,7 +143,11 @@ public class RequestCorrelationFilter implements Filter {
         final ServletRequest req = enrichRequest(request, requestCorrelation);
 
         // proceeds with execution
-        chain.doFilter(req, response);
+        try {
+            chain.doFilter(req, response);
+        } finally {
+            triggerInterceptorsCleanup(correlationId);
+        }
     }
 
     /**
@@ -176,6 +180,18 @@ public class RequestCorrelationFilter implements Filter {
 
         for (RequestCorrelationInterceptor interceptor : interceptors) {
             interceptor.afterCorrelationIdSet(correlationId);
+        }
+    }
+
+    /**
+     * Triggers the configured interceptors cleanUp methods.
+     *
+     * @param correlationId the correlation id
+     */
+    private void triggerInterceptorsCleanup(String correlationId) {
+
+        for (RequestCorrelationInterceptor interceptor : interceptors) {
+            interceptor.cleanUp(correlationId);
         }
     }
 

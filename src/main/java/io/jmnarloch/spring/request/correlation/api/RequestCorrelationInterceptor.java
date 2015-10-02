@@ -29,4 +29,11 @@ public interface RequestCorrelationInterceptor {
      * @param correlationId the correlation id
      */
     void afterCorrelationIdSet(String correlationId);
+
+    /**
+     * Callback method called after filter chain is completed.
+     *
+     * @param correlationId the correlation id
+     */
+    void cleanUp(String correlationId);
 }
